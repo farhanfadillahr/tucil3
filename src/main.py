@@ -106,56 +106,73 @@ def isidxtrue(nama_simpul,nama_tujuan, listnodes):
     else:
         return False
     
-def getbobotadj (namasimpul, listnodes, atr, adj):
+def getbobotsum (namasimpul, listnodes, atr, adj, tujuan):
     matbobot = []
+    gn = getgn(namasimpul,listnodes, atr, adj)
+    hn = gethn(namasimpul,listnodes,atr,adj)
     for i in range (len(adj)):
-        matbobot.append(jarakeuclidian(namasimpul, listnodes[adj[i]],atr)*10**3)
+        matbobot.append(gn[i]+hn[i])
     return matbobot
 
-def sort_list(mylist,adj):
+def getgn (namasimpul, listnodes, atr, adj):
+    matbobot = []
+    for i in range (len(adj)):
+        matbobot.append((jarakeuclidian(namasimpul, listnodes[adj[i]],atr)*10**3))
+    return matbobot
+
+def gethn(tujuan, listnodes, atr, adj):
+    hn=[]
+    for i in range (len(adj)):
+        hn.append(jarakeuclidian(listnodes[adj[i]],tujuan,atr)*10**3)
+    return hn
+
+def sort_list(mylist,adj, mylist1):
     # outer loop
     for i in range(len(mylist)-1, 0, -1):
         # inner loop
         for j in range(i):
-            if mylist[j] > mylist[j+1]:
+            if mylist1[j] > mylist1[j+1]:
                 # swap the value
                 temp = mylist[j]
                 temp1 = adj[j]
+                temp2 = mylist1[j]
                 mylist[j] = mylist[j+1]
                 adj[j]=adj[j+1]
+                mylist1[j] = mylist1[j+1]
                 mylist[j+1] = temp
                 adj[j+1]=temp1
+                mylist1[j+1]=temp2
 
+def sort_f(asal, listnodes, list, atr, tujuan):
+    li = []
+    for i in range(len(list)):
+        li.append(getindex(list[i],listnodes))
+    bobotsum = getbobotsum(asal,listnodes,atr,li,tujuan)
+    sort_list(li,list,bobotsum)
+            
 
 def astar (asal, tujuan, listnodes, mat, atr):
-    idxAsal = getindex(asal, listnodes)
-    idxTujuan = getindex(tujuan, listnodes)
-    adj = getadj(asal,mat,listnodes)
-    bobot = getbobotadj(asal,listnodes,atr,adj)
-    sort_list(bobot,adj)
-    if(idxTujuan in adj):
-        hasil = jarakeuclidian(asal, tujuan, atr)
-        print(hasil)
-    elif(len(adj)==0): pass
-    else :
-        rekursif(adj,tujuan,listnodes,mat,atr)
-        
-
-
-        
-def rekursif(adj,tujuan, listnodes, mat, atr):
-    for i in range (len(adj)):
-        adjrek = getadj(listnodes[adj[i]],mat,listnodes)
-        bobot = getbobotadj(listnodes[adj[i]],tujuan,atr,adjrek)
-        sort_list(bobot,adjrek)
-        
-
-
-
-    
+    openlist = [] 
+    closedlist=[]
+    openlist.append(asal)
+    while(len(openlist)!=0):
+        sort_f(asal,listnodes,openlist,atr,tujuan)
+        curr = openlist[0]
+        openlist.remove(curr)
+        closedlist.append(curr)
+        adjnei = getadj(curr,mat,listnodes)
+        for i in range (len(adjnei)):
+            if(listnodes[adjnei[i]] in closedlist):
+                pass
+            else :
+                if(listnodes[adjnei[i]] not in closedlist):
+                    openlist.append(listnodes[adjnei[i]])
+        if(tujuan in openlist):
+            break
+    return closedlist
 
 if __name__ == '__main__':
-    dokumen = "test/tes.txt"
+    dokumen = "../test/tes.txt"
     file = openfile(dokumen)
     jml = int(file[0])
     listnodes = list_nodes(file)
@@ -169,7 +186,7 @@ if __name__ == '__main__':
     for i in range (len(listnodes)):
         print (listnodes[i])
 
-    # gmbr.gambar(a,bobot)
+    gmbr.gambar(a,bobot)
     mat = matttg(dokumen)
     print(mat[0])
     awal = str(input("Masukkan Simpul Awal : "))
@@ -177,11 +194,9 @@ if __name__ == '__main__':
     adj = getadj(awal,mat,listnodes)
     print(len(adj))
     print(getindex(awal,listnodes))
-    bobot = getbobotadj(awal,listnodes,atr, adj)
-    sort_list(bobot,adj)
-    for i in range (len(bobot)):
-        print(bobot[i])
-    astar(awal,tujuan,listnodes,mat,atr)
+    hasil = astar(awal,tujuan,listnodes,mat,atr)
+    for i in range(len(hasil)):
+        print(hasil[i])
     # print(file)
     # print(listnodes)
     # print(atr)
