@@ -93,7 +93,7 @@ def getadj(nama_simpul, mat, listnodes):
     idx = getindex(nama_simpul, listnodes)
     matadj = []
     for i in range (len(listnodes)):
-        if(mat[idx][i]==1):
+        if(mat[idx][i]=='1'):
             matadj.append(i)
     return matadj
  
@@ -106,52 +106,51 @@ def isidxtrue(nama_simpul,nama_tujuan, listnodes):
     else:
         return False
     
-def getbobotadj (namasimpul, listnodes, atr, mat):
+def getbobotadj (namasimpul, listnodes, atr, adj):
     matbobot = []
-    adj = getadj(namasimpul, mat, listnodes)
     for i in range (len(adj)):
-        matbobot[i]=jarakeuclidian(namasimpul, listnodes[adj[i]],atr)
+        matbobot.append(jarakeuclidian(namasimpul, listnodes[adj[i]],atr)*10**3)
     return matbobot
 
-def sort_adj(asal,tujuan, adjasal,listnodes, atr):
-    n = len(adjasal)
-    for i in range(n-1):
-        for j in range(0, n-i-1):
-            a = jarakeuclidian(asal,listnodes[adjasal[j]],atr) + jarakeuclidian(listnodes[adjasal[j]], tujuan, atr)
-            b = jarakeuclidian(asal,listnodes[adjasal[j+1]],atr) + jarakeuclidian(listnodes[adjasal[j+1]], tujuan, atr)
-            if a > b :
-                a, b = b, a
-                adjasal[j],adjasal[j+1] = adjasal[j+1], adjasal[j]
-    return adjasal
+def sort_list(mylist,adj):
+    # outer loop
+    for i in range(len(mylist)-1, 0, -1):
+        # inner loop
+        for j in range(i):
+            if mylist[j] > mylist[j+1]:
+                # swap the value
+                temp = mylist[j]
+                temp1 = adj[j]
+                mylist[j] = mylist[j+1]
+                adj[j]=adj[j+1]
+                mylist[j+1] = temp
+                adj[j+1]=temp1
 
 
-# def astar (asal, tujuan, listnodes, mat, atr):
-#     idxAsal = getindex(asal, listnodes)
-#     idxTujuan = getindex(tujuan, listnodes)
-#     adjasal = (getadj(asal,mat,listnodes))
-#     adjasal = sort_adj(asal,tujuan,adjasal,listnodes,atr)
-#     bobot = [0 for i in range (len(adjasal))]
-#     if(idxTujuan in adjasal):
-#         hasil = jarakeuclidian(asal, tujuan, atr)
-#         return hasil
-#     elif(adjasal.count == 0): pass
-#     else :
-#         astarrek(idxAsal, idxTujuan, adjasal,listnodes, mat, atr)
+def astar (asal, tujuan, listnodes, mat, atr):
+    idxAsal = getindex(asal, listnodes)
+    idxTujuan = getindex(tujuan, listnodes)
+    adj = getadj(asal,mat,listnodes)
+    bobot = getbobotadj(asal,listnodes,atr,adj)
+    sort_list(bobot,adj)
+    if(idxTujuan in adj):
+        hasil = jarakeuclidian(asal, tujuan, atr)
+        print(hasil)
+    elif(len(adj)==0): pass
+    else :
+        rekursif(adj,tujuan,listnodes,mat,atr)
         
 
-# def astarrek (idxasal, idxtujuan, adjasal,listnodes, mat, atr):
-#     for i in range (len(adjasal)):
-#         adjrek = getadj(listnodes[adjasal[i]],mat, listnodes)
-#         adjrek = sort_adj(listnodes[adjasal[i]], listnodes[idxtujuan],adjasal,atr)
-#         if(idxtujuan in adjasal):
-#             hasil = jarakeuclidian(listnodes[adjasal[i]], listnodes[idxtujuan], atr)
-#             return hasil
-#         elif (adjrek.count == 0): pass
-#         else :
-#             for j in range (len(adjrek)):
-#                 adjrek2 = getadj(listnodes[adjrek[i]],mat, listnodes)
-#                 adjrek2 = sort_adj(listnodes[adjrek[i]], listnodes[idxtujuan],adjasal,atr)
-#                 astarrek(adjrek[j], idxtujuan, adjrek2,listnodes,mat,atr)
+
+        
+def rekursif(adj,tujuan, listnodes, mat, atr):
+    for i in range (len(adj)):
+        adjrek = getadj(listnodes[adj[i]],mat,listnodes)
+        bobot = getbobotadj(listnodes[adj[i]],tujuan,atr,adjrek)
+        sort_list(bobot,adjrek)
+        
+
+
 
     
 
@@ -172,11 +171,17 @@ if __name__ == '__main__':
 
     # gmbr.gambar(a,bobot)
     mat = matttg(dokumen)
-
+    print(mat[0])
     awal = str(input("Masukkan Simpul Awal : "))
     tujuan = str(input("Masukkan Simpul Tujuan : "))
-
-
+    adj = getadj(awal,mat,listnodes)
+    print(len(adj))
+    print(getindex(awal,listnodes))
+    bobot = getbobotadj(awal,listnodes,atr, adj)
+    sort_list(bobot,adj)
+    for i in range (len(bobot)):
+        print(bobot[i])
+    astar(awal,tujuan,listnodes,mat,atr)
     # print(file)
     # print(listnodes)
     # print(atr)

@@ -1,0 +1,1 @@
+    # adj = sort_list(listnodes,awal,tujuan,atr)
