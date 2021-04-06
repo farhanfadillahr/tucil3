@@ -31,3 +31,4 @@ def gambar(edge,bobot):
     fig = plt.gcf()
     fig.set_size_inches(10,8)
     plt.show()
+
