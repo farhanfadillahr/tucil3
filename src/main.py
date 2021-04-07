@@ -106,24 +106,14 @@ def arah(hasil):
         tempppp.append(edge)
     return tempppp
 if __name__ == '__main__':
-    file = openfile("tes.txt")
+    file = openfile("./test/dago.txt")
     listnodes = list_nodes(file)
     a = matriks_ketetangaan_to_edge(file,listnodes)
     atr = atr_nodes(file)
     jarak = jarakeuclidian(listnodes[0],listnodes[1],atr)
     bobot = bobot_edge(a,atr)
-    # print("panjang bobot: ", len(bobot))
-    # print(bobot)
-
-    # print(jarak*1000)
-    # gmbr.gambar(a,bobot)
-    # print(file)
-    # print(listnodes)
-    # print(atr)
-    # print("panjang pasangan: ", len(a))
-    # print(a)
-    # j = 0
-    # temp = list(a)
+    gmbr.gambar(a,bobot)
+    print("Daftar Simpul :")
     for i in range(len(listnodes)):
         print(listnodes[i])
 
@@ -163,7 +153,6 @@ if __name__ == '__main__':
                     ketemu = True
                     closedlist.append(dest)
                     break
-
         idx =0
         kecil = 999999
         pjg = len(openlist)
@@ -178,8 +167,9 @@ if __name__ == '__main__':
         if (not(ketemu)):
             closedlist.append(cur)
 
-    print(closedlist)
     hasil = arah(closedlist)
-    print(a)
-    print(hasil)
-    gmbr.gambar(a,hasil,bobot)
+    jumlah = 0
+    for i in range(len(hasil)//2):
+        jumlah = jumlah+jarakeuclidian(hasil[i][0],hasil[i][1],atr)
+    print("Jarak Simpul : ",jumlah*1000)
+    gmbr.gambarjadi(a,hasil,bobot)

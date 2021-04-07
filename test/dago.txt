@@ -1,0 +1,19 @@
+9
+SimpangTamanDago -6.898914 107.612686
+SimpangPelesiran -6.896861 107.609609
+SimpangBorromeus -6.893749 107.612943
+TamansariBATAN -6.888563 107.608088
+JlnSabuga -6.887330 107.609360
+JlCisituLama -6.882602 107.611693
+BormaDago -6.876839 107.617807
+MonumenPerjuangan -6.893374 107.618035
+JlPasupatiGasibu -6.899059 107.616565
+0 1 1 0 0 0 0 1 1
+1 0 0 1 0 0 0 0 0
+1 0 0 0 0 0 1 1 0
+0 1 0 0 1 0 0 0 0
+0 0 0 1 0 1 0 0 0
+0 0 0 0 1 0 1 0 0
+0 0 1 0 0 1 0 0 0
+1 0 1 0 0 0 0 0 1
+1 0 0 0 0 0 0 1 0
