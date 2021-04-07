@@ -1,7 +1,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 
-def gambar(edge,bobot):
+def gambar(edge,hasill,bobot):
     G = nx.DiGraph()
     for i in range(len(edge)):
         G.add_edges_from([edge[i]], weight = '{:.2f}'.format(bobot[i]*1000))
@@ -10,7 +10,7 @@ def gambar(edge,bobot):
     edge_labels = dict([((u, v,), d['weight'])
                         for u, v, d in G.edges(data=True)])
     # Specify the edges you want here
-    red_edges = edge
+    red_edges = hasill
     edge_colours = ['black' if not edge in red_edges else 'red'
                     for edge in G.edges()]
     black_edges = [edge for edge in G.edges() if edge not in red_edges]
@@ -28,7 +28,5 @@ def gambar(edge,bobot):
     nx.draw_networkx_edges(G, pos, edgelist=red_edges, edge_color='r', arrows=False)
     nx.draw_networkx_edges(G, pos, edgelist=black_edges, arrows=False)
     nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
-    fig = plt.gcf()
-    fig.set_size_inches(10,8)
-    plt.show()
 
+    plt.show()

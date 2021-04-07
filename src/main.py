@@ -63,141 +63,123 @@ def bobot_edge(list_edge,dict_atr_node):
         bobot.append(temp)
     return bobot
 
-def getindex(nama_simpul, listnodes):
-    cek = False
-    i = 0
-    while ((cek==False) & i != len(listnodes)):
-        if(listnodes[i]==nama_simpul):
-            cek = True
-            return i
-        else:
-            i = i+1
-    if(cek == False):
-        return (-1)
+def getTetangga(init,list_edges):
+    temp = []
+    for i in range(len(list_edges)):
+        if(list_edges[i][0] == init):
+            temp.append(list_edges[i][1])
+    return temp
 
-def matttg(namafile):
-    file = open(namafile, "r")
-    fread = file.readlines()
-    jumlah = int(fread[0])
-    mat = [[0 for i in range (jumlah)] for j in range (jumlah)]
-    for i in range(jumlah+1, len(fread), 1):
-        fread[i] = fread[i].replace("\n", "")
-        matsplit = []
-        matsplit = fread[i].split(" ")
-        for j in range (jumlah):
-            mat[i-jumlah-1][j]=matsplit[j]
-        # print('\n')
-    return mat
-
-def getadj(nama_simpul, mat, listnodes):
-    idx = getindex(nama_simpul, listnodes)
-    matadj = []
-    for i in range (len(listnodes)):
-        if(mat[idx][i]=='1'):
-            matadj.append(i)
-    return matadj
- 
-
-def isidxtrue(nama_simpul,nama_tujuan, listnodes):
-    idx = getindex(nama_simpul,listnodes)
-    idx2 = getindex(nama_tujuan, listnodes)
-    if(idx != (-1) & idx2 != (-1)):
-        return True
-    else:
-        return False
-    
-def getbobotsum (namasimpul, listnodes, atr, adj, tujuan):
+def getbobotadj (namasimpul, list_edges, atr):
     matbobot = []
-    gn = getgn(namasimpul,listnodes, atr, adj)
-    hn = gethn(namasimpul,listnodes,atr,adj)
+    adj = getTetangga(namasimpul,list_edges)
     for i in range (len(adj)):
-        matbobot.append(gn[i]+hn[i])
+        matbobot.append(jarakeuclidian(namasimpul, adj[i],atr))
     return matbobot
 
-def getgn (namasimpul, listnodes, atr, adj):
-    matbobot = []
-    for i in range (len(adj)):
-        matbobot.append((jarakeuclidian(namasimpul, listnodes[adj[i]],atr)*10**3))
-    return matbobot
+def adjplusbobot(adj,bobotadj):
+    dict = {}
+    for i in range(len(adj)):
+        dict[adj[i]] = bobotadj[i]
+    new = {k: v for k, v in sorted(dict.items(), key=lambda item: item[1])}
+    return new
 
-def gethn(tujuan, listnodes, atr, adj):
-    hn=[]
-    for i in range (len(adj)):
-        hn.append(jarakeuclidian(listnodes[adj[i]],tujuan,atr)*10**3)
-    return hn
+def arah(hasil):
+    tempppp = []
+    for i in range(len(hasil)):
+        edge = ()
+        temp = list(edge)
+        if i > 0:
+            temp.append(hasil[i - 1])
+            temp.append(hasil[i])
 
-def sort_list(mylist,adj, mylist1):
-    # outer loop
-    for i in range(len(mylist)-1, 0, -1):
-        # inner loop
-        for j in range(i):
-            if mylist1[j] > mylist1[j+1]:
-                # swap the value
-                temp = mylist[j]
-                temp1 = adj[j]
-                temp2 = mylist1[j]
-                mylist[j] = mylist[j+1]
-                adj[j]=adj[j+1]
-                mylist1[j] = mylist1[j+1]
-                mylist[j+1] = temp
-                adj[j+1]=temp1
-                mylist1[j+1]=temp2
+            edge = tuple(temp)
+            tempppp.append(edge)
+    for j in range(len(hasil)-1,0,-1):
+        edge = ()
+        temp = list(edge)
 
-def sort_f(asal, listnodes, list, atr, tujuan):
-    li = []
-    for i in range(len(list)):
-        li.append(getindex(list[i],listnodes))
-    bobotsum = getbobotsum(asal,listnodes,atr,li,tujuan)
-    sort_list(li,list,bobotsum)
-            
+        temp.append(hasil[j])
+        temp.append(hasil[j-1])
 
-def astar (asal, tujuan, listnodes, mat, atr):
-    openlist = [] 
-    closedlist=[]
-    openlist.append(asal)
-    while(len(openlist)!=0):
-        sort_f(asal,listnodes,openlist,atr,tujuan)
-        curr = openlist[0]
-        openlist.remove(curr)
-        closedlist.append(curr)
-        adjnei = getadj(curr,mat,listnodes)
-        for i in range (len(adjnei)):
-            if(listnodes[adjnei[i]] in closedlist):
-                pass
-            else :
-                if(listnodes[adjnei[i]] not in closedlist):
-                    openlist.append(listnodes[adjnei[i]])
-        if(tujuan in openlist):
-            break
-    return closedlist
-
+        edge = tuple(temp)
+        tempppp.append(edge)
+    return tempppp
 if __name__ == '__main__':
-    dokumen = "../test/tes.txt"
-    file = openfile(dokumen)
-    jml = int(file[0])
+    file = openfile("tes.txt")
     listnodes = list_nodes(file)
     a = matriks_ketetangaan_to_edge(file,listnodes)
     atr = atr_nodes(file)
     jarak = jarakeuclidian(listnodes[0],listnodes[1],atr)
     bobot = bobot_edge(a,atr)
-    # print(jarak*1000)
-    
-    #Cek List
-    for i in range (len(listnodes)):
-        print (listnodes[i])
+    # print("panjang bobot: ", len(bobot))
+    # print(bobot)
 
-    gmbr.gambar(a,bobot)
-    mat = matttg(dokumen)
-    print(mat[0])
-    awal = str(input("Masukkan Simpul Awal : "))
-    tujuan = str(input("Masukkan Simpul Tujuan : "))
-    adj = getadj(awal,mat,listnodes)
-    print(len(adj))
-    print(getindex(awal,listnodes))
-    hasil = astar(awal,tujuan,listnodes,mat,atr)
-    for i in range(len(hasil)):
-        print(hasil[i])
+    # print(jarak*1000)
+    # gmbr.gambar(a,bobot)
     # print(file)
     # print(listnodes)
     # print(atr)
+    # print("panjang pasangan: ", len(a))
     # print(a)
+    # j = 0
+    # temp = list(a)
+    for i in range(len(listnodes)):
+        print(listnodes[i])
+
+    init = str(input("Masukkan Simpul Awal : "))
+    dest = str(input("Masukkan Simpul Akhir : "))
+
+    # ALGORITMA A*
+    openlist = []
+    closedlist = []
+    ketemu = False
+    cur = init
+    g = 0
+    h = jarakeuclidian(init,dest,atr)
+    f = g + h
+    closedlist.append(init)
+    while(not(ketemu)):
+        ttg = getTetangga(cur, a)
+        bobot_ttg = getbobotadj(cur,a,atr)
+        dict = adjplusbobot(ttg,bobot_ttg)
+        for i in range(len(ttg)):
+            g = 0
+            temp = 0
+            openlist.append(ttg[i])
+
+            tes = dict[ttg[i]] + g
+            g = tes
+            h = jarakeuclidian(ttg[i],dest,atr)
+            f = g + h
+            openlist.append(f)
+            openlist.append(g)
+            openlist.append(h)
+
+        for i in range(len(openlist)):
+            y = i % 4
+            if y == 0:
+                if openlist[i] == dest:
+                    ketemu = True
+                    closedlist.append(dest)
+                    break
+
+        idx =0
+        kecil = 999999
+        pjg = len(openlist)
+        for i in range(pjg):
+            x = i%4
+            if(x == 1):
+                if(kecil > openlist[i]):
+                    kecil = openlist[i]
+
+        idx = openlist.index(kecil)
+        cur = openlist[idx-1]
+        if (not(ketemu)):
+            closedlist.append(cur)
+
+    print(closedlist)
+    hasil = arah(closedlist)
+    print(a)
+    print(hasil)
+    gmbr.gambar(a,hasil,bobot)
